@@ -1,5 +1,5 @@
 package ru.bobb.startwars;
 
-public interface IMove {
+public interface IMovable {
 	void execute();
 }
