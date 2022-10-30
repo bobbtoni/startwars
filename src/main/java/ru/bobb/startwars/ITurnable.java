@@ -1,5 +1,5 @@
 package ru.bobb.startwars;
 
-public interface ICommand {
+public interface ITurnable {
 	void execute();
 }

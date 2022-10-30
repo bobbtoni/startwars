@@ -3,7 +3,7 @@ package ru.bobb.startwars;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MoveAdapter implements ICommand {
+public class MoveAdapter implements IMovable {
 	
 	private final UObject object;
 

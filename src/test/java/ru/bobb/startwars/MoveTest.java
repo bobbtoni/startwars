@@ -14,7 +14,7 @@ public class MoveTest {
 		object.setProperty("position", new Vector(12, 5));
 		object.setProperty("velocity", new Vector(-7, 3));
 		
-		final ICommand move = new MoveAdapter(object);
+		final IMovable move = new MoveAdapter(object);
 		move.execute();
 		
 		assertEquals(new Vector(5, 8), object.getProperty("position"));
@@ -25,7 +25,7 @@ public class MoveTest {
 		final UObject object = new UObject();
 		object.setProperty("velocity", new Vector(-7, 3));
 		
-		final ICommand move = new MoveAdapter(object);
+		final IMovable move = new MoveAdapter(object);
 		move.execute();
 	}
 	
@@ -34,7 +34,7 @@ public class MoveTest {
 		final UObject object = new UObject();
 		object.setProperty("position", new Vector(-7, 3));
 		
-		final ICommand move = new MoveAdapter(object);
+		final IMovable move = new MoveAdapter(object);
 		move.execute();
 	}
 	
@@ -45,7 +45,7 @@ public class MoveTest {
 		when(object.getProperty("position")).thenReturn(new Vector(12, 5));
 		when(object.getProperty("velocity")).thenReturn(new Vector(-7, 3));
 		
-		final ICommand move = new MoveAdapter(object);
+		final IMovable move = new MoveAdapter(object);
 		move.execute();
 	}
 }
