@@ -23,24 +23,76 @@ public class ExceptionHandlerTest {
 		
 		exceptionHandler.handle(command, new IllegalStateException());
 		
-		verify(firstAction, times(0)).execute(any(TestCommand.class), any(IllegalStateException.class));
-		verify(secondAction, times(1)).execute(any(TestCommand.class), any(IllegalStateException.class));
+		verify(firstAction, times(0)).generateCommand(any(TestCommand.class), any(IllegalStateException.class));
+		verify(secondAction, times(1)).generateCommand(any(TestCommand.class), any(IllegalStateException.class));
 	}
 	
 	@Test
 	public void logCommandTest() {
-		final ExceptionHandler exceptionHandler = new ExceptionHandler();
 		final LogCommand logCommand = mock(LogCommand.class);
 		final ICommand testCommand = mock(ICommand.class);
-		when(testCommand.getClass()).thenCallRealMethod();
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
-		exceptionHandler.setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> logCommand.execute());
-		try {
-			testCommand.execute();
-		} catch (Exception e) {
-			exceptionHandler.handle(testCommand, e);
-		}
+		
+		QueueCommand queue = new QueueCommand();
+		queue.push(testCommand);
+		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> logCommand);
+		queue.start();
+		
 		verify(logCommand, times(1)).execute();
+	}
+	
+	@Test
+	public void retryExecuteCommandTest() {
+		final ICommand testCommand = mock(ICommand.class);
+		doThrow(IllegalArgumentException.class).when(testCommand).execute();
+		
+		try {
+			QueueCommand queue = new QueueCommand();
+			queue.push(testCommand);
+			queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
+			queue.start();
+		} catch (Exception e) {
+			// ignore
+		}
+		
+		verify(testCommand, times(2)).execute();
+	}
+	
+	@Test
+	public void twoRetryAndWriteToLogTest() {
+		final ICommand testCommand = mock(ICommand.class);
+		final LogCommand logCommand = mock(LogCommand.class);
+		doThrow(IllegalArgumentException.class).when(testCommand).execute();
+		
+
+		QueueCommand queue = new QueueCommand();
+		queue.push(testCommand);
+		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
+		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> new SecondRetryCommand(c));
+		queue.getExceptionHandler().setup(SecondRetryCommand.class, IllegalArgumentException.class, (c, e) -> logCommand);
+		queue.start();
+		
+		verify(logCommand, times(1)).execute();
+		verify(testCommand, times(3)).execute();
+		
+	}
+	
+	@Test
+	public void retryAndWriteToLogTest() {
+		final ICommand testCommand = mock(ICommand.class);
+		final LogCommand logCommand = mock(LogCommand.class);
+		doThrow(IllegalArgumentException.class).when(testCommand).execute();
+		
+
+		QueueCommand queue = new QueueCommand();
+		queue.push(testCommand);
+		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
+		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> logCommand);
+		queue.start();
+		
+		verify(logCommand, times(1)).execute();
+		verify(testCommand, times(2)).execute();
+		
 	}
  	
 	public static class TestCommand implements ICommand {

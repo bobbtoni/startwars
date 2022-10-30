@@ -10,10 +10,12 @@ public class ExceptionHandler {
 	
 	private final Map<Key, Action> actions = new HashMap<>();
 	
-	public void handle(ICommand command, Exception exception) {
+	public ICommand handle(ICommand command, Exception exception) {
 		final Action action = actions.get(new Key(command.getClass(), exception.getClass()));
 		if (action != null) {
-			action.execute(command, exception);
+			return action.generateCommand(command, exception);
+		} else {
+			throw new RuntimeException(exception);
 		}
 	}
 	
@@ -23,7 +25,7 @@ public class ExceptionHandler {
 	
 	@FunctionalInterface
 	public static interface Action<C extends ICommand, E extends Exception> {
-		void execute(ICommand command, Exception exception);
+		ICommand generateCommand(ICommand command, Exception exception);
 	}
 	
 	@AllArgsConstructor
