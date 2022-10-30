@@ -9,12 +9,9 @@ public class BurnFuelCommand implements ICommand {
 	
 	@Override
 	public void execute() {
-		final Vector velocity = (Vector) object.getProperty("velocity");
-		final int fuelRate = (int) object.getProperty("fuelRate");
 		final int fuelReserve = (int) object.getProperty("fuelReserve");
+		final int fuelSpent = (int) object.getProperty("fuelSpent");
 		
-		final int distance = (int) (Math.sqrt(velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY()) * 100);
-		final int fuelSpent = fuelRate * distance;
 		final int fuelRemain = fuelReserve - fuelSpent;
 		
 		object.setProperty("fuelReserve", fuelRemain);

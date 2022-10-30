@@ -8,8 +8,7 @@ public class CheckFuelTest {
 	public void successCheckFuelTest() {
 		final UObject object = new UObject();
 		object.setProperty("fuelReserve", 200);
-		object.setProperty("fuelRate", 1);
-		object.setProperty("velocity", new Vector(1, 1));
+		object.setProperty("fuelSpent", 100);
 		final ICommand checkFuelCmd = new CheckFuelCommand(object);
 		checkFuelCmd.execute();
 	}
@@ -18,8 +17,7 @@ public class CheckFuelTest {
 	public void failCheckFuelTest() {
 		final UObject object = new UObject();
 		object.setProperty("fuelReserve", 2);
-		object.setProperty("fuelRate", 1);
-		object.setProperty("velocity", new Vector(4, 4));
+		object.setProperty("fuelSpent", 11);
 		final ICommand checkFuelCmd = new CheckFuelCommand(object);
 		checkFuelCmd.execute();
 	}
