@@ -15,7 +15,7 @@ public class TurnTest {
 		object.setProperty("angularVelocity", 20);
 		object.setProperty("directionsNumber", 5);
 		
-		final ITurnable turnable = new TurnableAdapter(object);
+		final ICommand turnable = new TurnableAdapter(object);
 		turnable.execute();
 		
 		assertEquals(20, object.getProperty("direction"));
@@ -27,7 +27,7 @@ public class TurnTest {
 		object.setProperty("angularVelocity", 20);
 		object.setProperty("directionsNumber", 5);
 		
-		final ITurnable turnable = new TurnableAdapter(object);
+		final ICommand turnable = new TurnableAdapter(object);
 		turnable.execute();
 	}
 	
@@ -37,7 +37,7 @@ public class TurnTest {
 		object.setProperty("direction", 20);
 		object.setProperty("directionsNumber", 5);
 		
-		final ITurnable turnable = new TurnableAdapter(object);
+		final ICommand turnable = new TurnableAdapter(object);
 		turnable.execute();
 	}
 	
@@ -47,7 +47,7 @@ public class TurnTest {
 		object.setProperty("angularVelocity", 20);
 		object.setProperty("direction", 5);
 		
-		final ITurnable turnable = new TurnableAdapter(object);
+		final ICommand turnable = new TurnableAdapter(object);
 		turnable.execute();
 	}
 	
@@ -59,7 +59,7 @@ public class TurnTest {
 		when(object.getProperty("directionsNumber")).thenReturn(5);
 		doThrow(IllegalStateException.class).when(object).setProperty(eq("direction"), any(Object.class));
 		
-		final ITurnable turnable = new TurnableAdapter(object);
+		final ICommand turnable = new TurnableAdapter(object);
 		turnable.execute();
 	}
 

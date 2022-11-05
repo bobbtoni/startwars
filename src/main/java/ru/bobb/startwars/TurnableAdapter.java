@@ -3,7 +3,7 @@ package ru.bobb.startwars;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TurnableAdapter implements ITurnable {
+public class TurnableAdapter implements ICommand {
 	
 	private final UObject object;
 
