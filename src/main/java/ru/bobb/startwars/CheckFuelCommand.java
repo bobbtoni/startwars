@@ -5,12 +5,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CheckFuelCommand implements ICommand {
 	
-	private final UObject object;
+	private final IFuelable object;
 
 	@Override
 	public void execute() {
-		final int fuelSpent = (int) object.getProperty("fuelSpent");
-		final int fuelReserve = (int) object.getProperty("fuelReserve");
+		final int fuelSpent = object.getFuelSpent();
+		final int fuelReserve = object.getFuelReserve();
 		final int fuelRemain = fuelReserve - fuelSpent;
 		
 		if (fuelRemain < 0) {

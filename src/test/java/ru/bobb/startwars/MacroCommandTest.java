@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
+import ru.bobb.startwars.ioc.IoC;
+
 public class MacroCommandTest {
 	
 	@Test
@@ -48,9 +50,11 @@ public class MacroCommandTest {
 		object.setProperty("fuelReserve", 200);
 		object.setProperty("fuelSpent", 100);
 		
-		final ICommand checkCommand = new CheckFuelCommand(object);
-		final ICommand moveCommand = new MoveAdapter(object);
-		final ICommand burnCommand = new BurnFuelCommand(object);
+		final IFuelable fuelableObject = IoC.resolve("Adapter", IFuelable.class, object);
+		final ICommand checkCommand = new CheckFuelCommand(fuelableObject);
+		final IMovable movableObject = IoC.resolve("Adapter", IMovable.class, object);
+		final ICommand moveCommand = new MoveCommand(movableObject);
+		final ICommand burnCommand = new BurnFuelCommand(fuelableObject);
 		
 		final ICommand moveInLineCommand = new MacroCommand(checkCommand, moveCommand, burnCommand);
 		moveInLineCommand.execute();
@@ -67,9 +71,11 @@ public class MacroCommandTest {
 		object.setProperty("fuelReserve", 200);
 		object.setProperty("fuelSpent", 300);
 		
-		final ICommand checkCommand = new CheckFuelCommand(object);
-		final ICommand moveCommand = new MoveAdapter(object);
-		final ICommand burnCommand = new BurnFuelCommand(object);
+		final IFuelable fuelableObject = IoC.resolve("Adapter", IFuelable.class, object);
+		final ICommand checkCommand = new CheckFuelCommand(fuelableObject);
+		final IMovable movableObject = IoC.resolve("Adapter", IMovable.class, object);
+		final ICommand moveCommand = new MoveCommand(movableObject);
+		final ICommand burnCommand = new BurnFuelCommand(fuelableObject);
 		
 		try {
 			final ICommand moveInLineCommand = new MacroCommand(checkCommand, moveCommand, burnCommand);

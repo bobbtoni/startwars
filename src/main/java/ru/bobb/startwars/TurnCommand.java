@@ -1,11 +1,14 @@
 package ru.bobb.startwars;
 
+import ru.bobb.startwars.ioc.IoC;
+
 public class TurnCommand implements ICommand {
 	
 	private final MacroCommand macro;
 	
 	public TurnCommand(UObject object) {
-		this.macro = new MacroCommand(new TurnableAdapter(object), new ChangeVelocityCommand(object));
+		final ITurnable turnableObject = IoC.resolve("Adapter", ITurnable.class, object);
+		this.macro = new MacroCommand(new TurnableCommand(turnableObject), new ChangeVelocityCommand(object));
 	}
 
 	@Override

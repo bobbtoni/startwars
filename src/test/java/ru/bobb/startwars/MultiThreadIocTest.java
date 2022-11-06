@@ -17,22 +17,24 @@ public class MultiThreadIocTest {
 	@Test
 	public void switchScopesTest() throws InterruptedException, ExecutionException {
 		IoC.<ICommand>resolve("Scopes.Current", "scope1").execute();
-		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new MoveAdapter((UObject) args[0])).execute();
+		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new MoveCommand((IMovable) args[0])).execute();
 		
 		IoC.<ICommand>resolve("Scopes.Current", "scope2").execute();
-		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new TurnableAdapter((UObject) args[0])).execute();
+		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new TurnableCommand((ITurnable) args[0])).execute();
 		
 		final ExecutorService executorService = ExecutorServiceUtil.newExecutorService();
 		final Future<ICommand> future1 = executorService.submit(() -> {
 			IoC.<ICommand>resolve("Scopes.Current", "scope1").execute();
-			return IoC.resolve("Test", new UObject());
+			final IMovable movableObject = IoC.resolve("Adapter", IMovable.class, new UObject());
+			return IoC.resolve("Test", movableObject);
 		});
 		final Future<ICommand> future2 = executorService.submit(() -> {
 			IoC.<ICommand>resolve("Scopes.Current", "scope2").execute();
-			return IoC.resolve("Test", new UObject());
+			final ITurnable turnableObject = IoC.resolve("Adapter", ITurnable.class, new UObject());
+			return IoC.resolve("Test", turnableObject);
 		});
 		
-		assertEquals(MoveAdapter.class, future1.get().getClass());
-		assertEquals(TurnableAdapter.class, future2.get().getClass());
+		assertEquals(MoveCommand.class, future1.get().getClass());
+		assertEquals(TurnableCommand.class, future2.get().getClass());
 	}
 }
