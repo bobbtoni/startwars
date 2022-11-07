@@ -28,7 +28,7 @@ public class ExceptionHandlerTest {
 	}
 	
 	@Test
-	public void logCommandTest() {
+	public void logCommandTest() throws InterruptedException {
 		final LogCommand logCommand = mock(LogCommand.class);
 		final ICommand testCommand = mock(ICommand.class);
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
@@ -37,7 +37,7 @@ public class ExceptionHandlerTest {
 		queue.push(testCommand);
 		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> logCommand);
 		queue.start();
-		
+		Thread.sleep(1000L);
 		verify(logCommand, times(1)).execute();
 	}
 	
@@ -51,6 +51,7 @@ public class ExceptionHandlerTest {
 			queue.push(testCommand);
 			queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
 			queue.start();
+			Thread.sleep(1000L);
 		} catch (Exception e) {
 			// ignore
 		}
@@ -59,7 +60,7 @@ public class ExceptionHandlerTest {
 	}
 	
 	@Test
-	public void twoRetryAndWriteToLogTest() {
+	public void twoRetryAndWriteToLogTest() throws InterruptedException {
 		final ICommand testCommand = mock(ICommand.class);
 		final LogCommand logCommand = mock(LogCommand.class);
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
@@ -71,6 +72,7 @@ public class ExceptionHandlerTest {
 		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> new SecondRetryCommand(c));
 		queue.getExceptionHandler().setup(SecondRetryCommand.class, IllegalArgumentException.class, (c, e) -> logCommand);
 		queue.start();
+		Thread.sleep(1000L);
 		
 		verify(logCommand, times(1)).execute();
 		verify(testCommand, times(3)).execute();
@@ -78,7 +80,7 @@ public class ExceptionHandlerTest {
 	}
 	
 	@Test
-	public void retryAndWriteToLogTest() {
+	public void retryAndWriteToLogTest() throws InterruptedException {
 		final ICommand testCommand = mock(ICommand.class);
 		final LogCommand logCommand = mock(LogCommand.class);
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
@@ -89,6 +91,7 @@ public class ExceptionHandlerTest {
 		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
 		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> logCommand);
 		queue.start();
+		Thread.sleep(1000L);
 		
 		verify(logCommand, times(1)).execute();
 		verify(testCommand, times(2)).execute();
