@@ -1,23 +1,22 @@
 package ru.bobb.startwars;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+
+import ru.bobb.startwars.ioc.IoC;
 
 public class QueueCommandTest {
 	
 	@Test
 	public void startTest() throws InterruptedException {
 		final ICommand command = mock(ICommand.class);
-		final QueueCommand queueCommand = new QueueCommand();
-		queueCommand.push(command);
-		queueCommand.start();
+		
+		IoC.<ICommand>resolve("Queue.Push", command).execute();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		
 		Thread.sleep(1000);
 		
@@ -27,7 +26,6 @@ public class QueueCommandTest {
 	@Test
 	public void softStopTest() throws InterruptedException {
 		final AtomicInteger counter = new AtomicInteger(0);
-		final QueueCommand queueCommand = new QueueCommand();
 		final int amountCommands = 100;
 		for (int i = 0; i < amountCommands; i++) {
 			final ICommand command = new ICommand() {
@@ -42,24 +40,23 @@ public class QueueCommandTest {
 					counter.getAndIncrement();
 				}
 			};
-			queueCommand.push(command);
+			IoC.<ICommand>resolve("Queue.Push", command).execute();
 		}
 		
-		queueCommand.start();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		Thread.sleep(100);
-		queueCommand.softStop();
+		IoC.<ICommand>resolve("Queue.SoftStop").execute();
 		
 		Thread.sleep(1000);
 		assertFalse(counter.get() == amountCommands);
 		
-		Thread.sleep(10000);
+		Thread.sleep(20000);
 		assertTrue(counter.get() == amountCommands);
 	}
 	
 	@Test
 	public void hardStopTest() throws InterruptedException {
 		final AtomicInteger counter = new AtomicInteger(0);
-		final QueueCommand queueCommand = new QueueCommand();
 		final int amountCommands = 100;
 		for (int i = 0; i < amountCommands; i++) {
 			final ICommand command = new ICommand() {
@@ -74,31 +71,29 @@ public class QueueCommandTest {
 					counter.getAndIncrement();
 				}
 			};
-			queueCommand.push(command);
+			IoC.<ICommand>resolve("Queue.Push", command).execute();
 		}
 		
-		queueCommand.start();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		Thread.sleep(100);
-		queueCommand.hardStop();
+		IoC.<ICommand>resolve("Queue.HardStop").execute();
 		
 		Thread.sleep(1000);
 		assertTrue(counter.get() < amountCommands);
 		
-		Thread.sleep(10000);
+		Thread.sleep(20000);
 		assertTrue(counter.get() < amountCommands);
 	}
 	
 	@Test
 	public void restartAfterSoftStopTest() throws InterruptedException {
 		
-		final QueueCommand queueCommand = new QueueCommand();
-		
-		queueCommand.start();
-		queueCommand.softStop();
+		IoC.<ICommand>resolve("Queue.Start").execute();
+		IoC.<ICommand>resolve("Queue.SoftStop").execute();
 		
 		final ICommand command = mock(ICommand.class);
-		queueCommand.push(command);
-		queueCommand.start();
+		IoC.<ICommand>resolve("Queue.Push", command).execute();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		
 		Thread.sleep(1000);
 		
@@ -108,14 +103,12 @@ public class QueueCommandTest {
 	@Test
 	public void restartAfterHardStopTest() throws InterruptedException {
 		
-		final QueueCommand queueCommand = new QueueCommand();
-		
-		queueCommand.start();
-		queueCommand.hardStop();
+		IoC.<ICommand>resolve("Queue.Start").execute();
+		IoC.<ICommand>resolve("Queue.HardStop").execute();
 		
 		final ICommand command = mock(ICommand.class);
-		queueCommand.push(command);
-		queueCommand.start();
+		IoC.<ICommand>resolve("Queue.Push", command).execute();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		
 		Thread.sleep(1000);
 		
@@ -124,11 +117,10 @@ public class QueueCommandTest {
 	
 	@Test
 	public void addingHotCommandTest() throws InterruptedException {
-		final QueueCommand queueCommand = new QueueCommand();
-		queueCommand.start();
+		IoC.<ICommand>resolve("Queue.Start").execute();
 		Thread.sleep(1000);
 		final ICommand command = mock(ICommand.class);
-		queueCommand.push(command);
+		IoC.<ICommand>resolve("Queue.Push", command).execute();
 		Thread.sleep(1000);
 		verify(command, times(1)).execute();
 	}

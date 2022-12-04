@@ -33,7 +33,7 @@ public class ExceptionHandlerTest {
 		final ICommand testCommand = mock(ICommand.class);
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
 		
-		QueueCommand queue = new QueueCommand();
+		Queue queue = new Queue();
 		queue.push(testCommand);
 		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> logCommand);
 		queue.start();
@@ -47,7 +47,7 @@ public class ExceptionHandlerTest {
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
 		
 		try {
-			QueueCommand queue = new QueueCommand();
+			Queue queue = new Queue();
 			queue.push(testCommand);
 			queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
 			queue.start();
@@ -66,7 +66,7 @@ public class ExceptionHandlerTest {
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
 		
 
-		QueueCommand queue = new QueueCommand();
+		Queue queue = new Queue();
 		queue.push(testCommand);
 		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
 		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> new SecondRetryCommand(c));
@@ -86,7 +86,7 @@ public class ExceptionHandlerTest {
 		doThrow(IllegalArgumentException.class).when(testCommand).execute();
 		
 
-		QueueCommand queue = new QueueCommand();
+		Queue queue = new Queue();
 		queue.push(testCommand);
 		queue.getExceptionHandler().setup(testCommand.getClass(), IllegalArgumentException.class, (c, e) -> new FirstRetryCommand(c));
 		queue.getExceptionHandler().setup(FirstRetryCommand.class, IllegalArgumentException.class, (c, e) -> logCommand);

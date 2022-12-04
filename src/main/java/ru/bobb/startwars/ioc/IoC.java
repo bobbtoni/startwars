@@ -1,6 +1,7 @@
 package ru.bobb.startwars.ioc;
 
 import ru.bobb.startwars.ICommand;
+import ru.bobb.startwars.QueueFactory;
 import ru.bobb.startwars.UObject;
 import ru.bobb.startwars.Vector;
 import ru.bobb.startwars.codegenerator.AdapterGenerator;
@@ -106,6 +107,30 @@ public abstract class IoC {
 				final UObject object = (UObject) args[0];
 				final Vector newValue = (Vector) args[1];
 				object.setProperty("position", newValue);
+			};
+		}).execute();
+		
+		IoC.<ICommand>resolve("IoC.Register", "Queue.Start", (ObjectFactory) args -> {
+			return (ICommand) () -> {
+				QueueFactory.resolve().start();
+			};
+		}).execute();
+		
+		IoC.<ICommand>resolve("IoC.Register", "Queue.Push", (ObjectFactory) args -> {
+			return (ICommand) () -> {
+				QueueFactory.resolve().push((ICommand) args[0]);
+			};
+		}).execute();
+		
+		IoC.<ICommand>resolve("IoC.Register", "Queue.SoftStop", (ObjectFactory) args -> {
+			return (ICommand) () -> {
+				QueueFactory.resolve().softStop();
+			};
+		}).execute();
+		
+		IoC.<ICommand>resolve("IoC.Register", "Queue.HardStop", (ObjectFactory) args -> {
+			return (ICommand) () -> {
+				QueueFactory.resolve().hardStop();
 			};
 		}).execute();
 	}

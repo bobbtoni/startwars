@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import lombok.Getter;
 
-public class QueueCommand {
+public class Queue {
 	private ConcurrentLinkedQueue<ICommand> queue = new ConcurrentLinkedQueue<>();
 	@Getter
 	private ExceptionHandler exceptionHandler = new ExceptionHandler();
@@ -15,7 +15,7 @@ public class QueueCommand {
 	
 	private Thread executThread = null;
 	
-	public QueueCommand() {
+	public Queue() {
 		initThread();
 	}
 	
