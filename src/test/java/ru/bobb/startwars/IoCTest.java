@@ -12,9 +12,9 @@ public class IoCTest {
 	
 	@Test
 	public void registerDependencyTest() {
-		IoC.<ICommand>resolve("IoC.Register", "Move", (ObjectFactory) (args) -> new MoveAdapter((UObject) args[0])).execute();
-		final ICommand command = IoC.resolve("Move", new UObject());
-		assertEquals(MoveAdapter.class, command.getClass());
+		IoC.<ICommand>resolve("IoC.Register", "Move", (ObjectFactory) (args) -> new MoveCommand((IMovable) args[0])).execute();
+		final ICommand command = IoC.resolve("Move", IoC.<IMovable>resolve("Adapter", IMovable.class, new UObject()));
+		assertEquals(MoveCommand.class, command.getClass());
 	}
 	
 	@Test(expected = MissingDependencyException.class)
@@ -25,18 +25,18 @@ public class IoCTest {
 	@Test
 	public void switchScopeTest() {
 		IoC.<ICommand>resolve("Scopes.Current", "scope1").execute();
-		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new MoveAdapter((UObject) args[0])).execute();
+		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new MoveCommand((IMovable) args[0])).execute();
 		
 		IoC.<ICommand>resolve("Scopes.Current", "scope2").execute();
-		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new TurnableAdapter((UObject) args[0])).execute();
+		IoC.<ICommand>resolve("IoC.Register", "Test", (ObjectFactory) (args) -> new TurnableCommand((ITurnable) args[0])).execute();
 		
 		IoC.<ICommand>resolve("Scopes.Current", "scope1").execute();
-		final ICommand testCommandFromScope1 = IoC.resolve("Test", new UObject());
-		assertEquals(MoveAdapter.class, testCommandFromScope1.getClass());
+		final ICommand testCommandFromScope1 = IoC.resolve("Test", IoC.<IMovable>resolve("Adapter", IMovable.class, new UObject()));
+		assertEquals(MoveCommand.class, testCommandFromScope1.getClass());
 		
 		IoC.<ICommand>resolve("Scopes.Current", "scope2").execute();
-		final ICommand testCommandFromScope2 = IoC.resolve("Test", new UObject());
-		assertEquals(TurnableAdapter.class, testCommandFromScope2.getClass());
+		final ICommand testCommandFromScope2 = IoC.resolve("Test", IoC.<IMovable>resolve("Adapter", ITurnable.class, new UObject()));
+		assertEquals(TurnableCommand.class, testCommandFromScope2.getClass());
 	}
 	
 	

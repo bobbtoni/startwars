@@ -2,6 +2,8 @@ package ru.bobb.startwars;
 
 import org.junit.Test;
 
+import ru.bobb.startwars.ioc.IoC;
+
 public class CheckFuelTest {
 	
 	@Test
@@ -9,7 +11,8 @@ public class CheckFuelTest {
 		final UObject object = new UObject();
 		object.setProperty("fuelReserve", 200);
 		object.setProperty("fuelSpent", 100);
-		final ICommand checkFuelCmd = new CheckFuelCommand(object);
+		final IFuelable fuelableObject = IoC.resolve("Adapter", IFuelable.class, object);
+		final ICommand checkFuelCmd = new CheckFuelCommand(fuelableObject);
 		checkFuelCmd.execute();
 	}
 	
@@ -18,7 +21,8 @@ public class CheckFuelTest {
 		final UObject object = new UObject();
 		object.setProperty("fuelReserve", 2);
 		object.setProperty("fuelSpent", 11);
-		final ICommand checkFuelCmd = new CheckFuelCommand(object);
+		final IFuelable fuelableObject = IoC.resolve("Adapter", IFuelable.class, object);
+		final ICommand checkFuelCmd = new CheckFuelCommand(fuelableObject);
 		checkFuelCmd.execute();
 	}
 }
