@@ -3,7 +3,7 @@ package ru.bobb.startwars.ioc;
 import ru.bobb.startwars.ICommand;
 import ru.bobb.startwars.UObject;
 import ru.bobb.startwars.Vector;
-import ru.bobb.startwars.codegenerator.AdapterGenerator;
+import ru.bobb.startwars.codegenerator.proxy.AdapterGenerator;
 
 public abstract class IoC {
 	
